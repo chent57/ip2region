@@ -193,7 +193,7 @@ if __name__ == '__main__':
         countryName = region_str.split("|")[0]
 
         if countryName == "中国":
-            cityName = region_str.split("|")[2]
+            cityName = region_str.split("|")[2] # 2为省份，3为城市
             ipAddrMap[cityName] = 1 + ipAddrMap.get(cityName, 0)
         else:
             ipAddrMap[countryName] = 1 + ipAddrMap.get(countryName, 0)
