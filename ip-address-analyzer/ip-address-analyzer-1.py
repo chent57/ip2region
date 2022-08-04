@@ -174,9 +174,15 @@ class XdbSearcher(object):
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print(">>>命令格式：python ipAddressSearcher.py ip-daid.txt succ_daid.txt result.txt")
-        print(">>>文件格式：ip-daid.txt文件每行1个IP地址一个daid, succ_daid.txt成功的daid， result.txt为输出结果")
+        print(">>>文件格式：ip-daid.txt文件每行1个IP地址一个daid, succ_daid.txt 成功的daid, result.txt为输出结果")
         exit(0)
     searcher = XdbSearcher("./ip2region.xdb")
+
+    succDaIdFile = open(sys.argv[2], "r");
+    succDaIdSet = set()
+    for l in succDaIdFile:
+        succDaIdSet.add(l.strip())
+
 
     ipAddrFile = open(sys.argv[1], "r");
     totalIpAddrCount = 0
@@ -184,25 +190,29 @@ if __name__ == '__main__':
 
     ipAddrMap = {}
     for l in ipAddrFile:
-        if not XdbSearcher.isip(None, ip=l.strip()):
+        ip = l.split(" ")[0].strip()
+        daId = l.split(" ")[1].strip()
+
+        if not XdbSearcher.isip(None, ip):
             print("Error: invalid ip address:" + l)
             continue
 
-        totalIpAddrCount += 1
-        region_str = searcher.searchByIPStr(l)
+        if daId in succDaIdSet:
+            totalIpAddrCount += 1
+            region_str = searcher.searchByIPStr(l)
 
-        countryName = region_str.split("|")[0]
+            countryName = region_str.split("|")[0]
 
-        if countryName == "中国":
-            cityName = region_str.split("|")[2] # 2为省份，3为城市
-            ipAddrMap[cityName] = 1 + ipAddrMap.get(cityName, 0)
-        else:
-            ipAddrMap[countryName] = 1 + ipAddrMap.get(countryName, 0)
+            if countryName == "中国":
+                cityName = region_str.split("|")[3]  # 2为省份，3为城市
+                ipAddrMap[cityName] = 1 + ipAddrMap.get(cityName, 0)
+            else:
+                ipAddrMap[countryName] = 1 + ipAddrMap.get(countryName, 0)
 
     print("合法IP地址总数:" + str(totalIpAddrCount))
 
-    outFile = ipAddrFile = open(sys.argv[2], "x", encoding="UTF-8")
-    print("结果写入文件：" + sys.argv[2])
+    outFile = ipAddrFile = open(sys.argv[3], "x", encoding="UTF-8")
+    print("结果写入文件：" + sys.argv[3])
     for cN, times in ipAddrMap.items():
         outFile.write(cN + " " + str(times) + "\n")
 
