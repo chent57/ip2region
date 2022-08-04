@@ -174,7 +174,7 @@ class XdbSearcher(object):
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print(">>>命令格式：python ipAddressSearcher.py ip-daid.txt succ_daid.txt result.txt")
-        print(">>>文件格式：ip-daid.txt文件每行1个IP地址一个daid, succ_daid.txt 成功的daid, result.txt为输出结果")
+        print(">>>文件格式：ip-daid.txt文件每行1个IP地址一个daid, succ_daid.txt是成功的daid, result.txt为输出结果")
         exit(0)
     searcher = XdbSearcher("./ip2region.xdb")
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
             print("Error: invalid ip address:" + l)
             continue
 
-        if daId in succDaIdSet:
+        if daId not in succDaIdSet:
             totalIpAddrCount += 1
             region_str = searcher.searchByIPStr(l)
 
